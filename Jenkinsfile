@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:14'
-            args '-p 3000:3000'  // Exposes port 3000
-        }
-    }
+    agent any
     environment {
         DOCKER_IMAGE = 'vishal8266/nextjs-app'
         DOCKER_CREDENTIALS_ID = '31c18687-84ff-4865-82f3-b80a6d088921'
@@ -17,12 +12,20 @@ pipeline {
         }
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                script {
+                    docker.image('node:14').inside {
+                        sh 'npm install'
+                    }
+                }
             }
         }
         stage('Build') {
             steps {
-                sh 'npm run build'
+                script {
+                    docker.image('node:14').inside {
+                        sh 'npm run build'
+                    }
+                }
             }
         }
         stage('Docker Build & Push') {
