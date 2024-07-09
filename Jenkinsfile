@@ -28,16 +28,21 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 script {
-                    docker.build("${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}").push()
+                    docker.withRegistry('', "${DOCKER_CREDENTIALS_ID}") {
+                        def app = docker.build("${env.DOCKER_IMAGE}:${env.BUILD_NUMBER}")
+                        app.push()
+                    }
                 }
             }
         }
         stage('Deploy') {
             steps {
                 script {
-                    docker.stop('nextjs-app') || true
-                    docker.rm('nextjs-app') || true
-                    docker.run('-d -p 3000:3000 --name nextjs-app ${DOCKER_IMAGE}:${BUILD_NUMBER}')
+                    sh '''
+                    docker stop nextjs-app || true
+                    docker rm nextjs-app || true
+                    docker run -d -p 3000:3000 --name nextjs-app ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                    '''
                 }
             }
         }
