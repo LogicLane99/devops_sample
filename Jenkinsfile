@@ -6,7 +6,7 @@ pipeline {
         }
     }
     environment {
-        DOCKER_IMAGE = 'vishal8266/my-app'
+        DOCKER_IMAGE = 'vishal8266/nextjs-app'
         DOCKER_CREDENTIALS_ID = '31c18687-84ff-4865-82f3-b80a6d088921'
     }
     stages {
